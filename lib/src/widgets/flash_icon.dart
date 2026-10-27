@@ -1,8 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
-class CameraFlashIcon extends StatefulWidget {
+/// Round button showing the current flash mode.
+class CameraFlashIcon extends StatelessWidget {
   const CameraFlashIcon({
     super.key,
     required this.onTap,
@@ -15,32 +14,19 @@ class CameraFlashIcon extends StatefulWidget {
   final Widget? flashControlBuilder;
 
   @override
-  State<CameraFlashIcon> createState() => _CameraFlashIconState();
-}
-
-class _CameraFlashIconState extends State<CameraFlashIcon> {
-  Timer? _rotationTimer;
-
-  @override
-  void dispose() {
-    _rotationTimer?.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onTap,
+      onTap: onTap,
       child: SizedBox(
         width: 60,
         height: 60,
         child:
-            widget.flashControlBuilder ??
+            flashControlBuilder ??
             ClipOval(
               child: Container(
                 color: Colors.black.withValues(alpha: 0.3),
                 padding: const EdgeInsets.all(2.0),
-                child: Icon(widget.flashIcon, color: Colors.white),
+                child: Icon(flashIcon, color: Colors.white),
               ),
             ),
       ),

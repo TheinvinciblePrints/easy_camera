@@ -7,6 +7,15 @@
 # To learn more about customizing static analysis for your package or app,
 # visit https://dart.dev/tools/analysis.
 
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
 include: package:lints/core.yaml
 
 linter:

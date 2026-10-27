@@ -1,44 +1,84 @@
-import 'dart:async';
-
-import 'package:camera/camera.dart';
-
-/// A utility class for managing camera operations in a Flutter app.
 import 'package:flutter/material.dart';
 
+import 'analysis/image_analyzer.dart';
 import 'camera_config.dart';
-import 'camera_widget.dart';
-import 'logger.dart';
+import 'models/camera_description.dart';
+import 'models/camera_enums.dart';
+import 'models/capture_result.dart';
+import 'platform/camera_platform.dart';
+import 'platform/mappers.dart';
+import 'platform/messages.g.dart';
+import 'widgets/easy_camera_view.dart';
 
-class EasyCamera {
-  /// A list of available cameras on the device.
-  static List<CameraDescription> _cameras = <CameraDescription>[];
+/// Static helpers for the camera.
+abstract final class EasyCamera {
+  /// Print camera errors with `debugPrint`.
+  static bool debugLogging = false;
 
-  /// Flag to enable or disable debug logs.
-  static bool _printLogs = false;
+  static Future<List<EasyCameraDescription>> availableCameras() async =>
+      (await CameraPlatform.instance.availableCameras())
+          .map((PlatformCameraInfo c) => c.toDescription())
+          .toList();
 
-  /// Initializes the camera by fetching the list of available cameras.
+  static Future<CameraPermissionStatus> checkPermission() async =>
+      (await CameraPlatform.instance.checkPermission()).toStatus();
+
+  static Future<CameraPermissionStatus> requestPermission() async =>
+      (await CameraPlatform.instance.requestPermission()).toStatus();
+
+  /// Opens this app's page in the system settings, where the user can grant
+  /// camera access after denying it permanently.
+  static Future<bool> openAppSettings() =>
+      CameraPlatform.instance.openAppSettings();
+
+  /// Pushes a full-screen camera and returns the accepted photo, or null if
+  /// the user closed the camera.
   ///
-  /// - [printLogs]: If true, debug logs will be printed.
-  static Future<void> initialize({bool printLogs = false}) async {
-    try {
-      _cameras = await availableCameras();
-      _printLogs = printLogs;
-    } on CameraException catch (e) {
-      logError(e.code, e.description);
-    }
+  /// ```dart
+  /// final photo = await EasyCamera.capture(context, config: CameraConfig.food());
+  /// if (photo != null) upload(photo.toClaudeImageBlock());
+  /// ```
+  static Future<EasyCaptureResult?> capture(
+    BuildContext context, {
+    CameraConfig config = const CameraConfig(),
+  }) {
+    return Navigator.of(context).push<EasyCaptureResult>(
+      MaterialPageRoute<EasyCaptureResult>(
+        fullscreenDialog: true,
+        builder:
+            (BuildContext context) => EasyCameraView(
+              config: config,
+              onCapture:
+                  (EasyCaptureResult capture) =>
+                      Navigator.of(context).pop(capture),
+            ),
+      ),
+    );
   }
 
-  /// Returns the list of available cameras.
-  static List<CameraDescription> get cameras => _cameras;
-
-  /// Returns whether debug logging is enabled.
-  static bool get printLogs => _printLogs;
-
-  /// Wraps `EasyCameraWidget` inside a `Scaffold`
-  static Widget cameraView({
-    required CameraConfig config,
-    required void Function(XFile?) onCapture,
+  /// Like [capture], but also runs [analyzer] and shows its result on the
+  /// review screen. Returns the photo with its analysis, or null if the user
+  /// closed the camera.
+  static Future<(EasyCaptureResult, T?)?> captureAndAnalyze<T>(
+    BuildContext context, {
+    required ImageAnalyzer<T> analyzer,
+    CameraConfig config = const CameraConfig(),
+    Widget Function(BuildContext context, T result)? resultBuilder,
   }) {
-    return EasyCameraWidget(config: config, onCapture: onCapture);
+    return Navigator.of(context).push<(EasyCaptureResult, T?)>(
+      MaterialPageRoute<(EasyCaptureResult, T?)>(
+        fullscreenDialog: true,
+        builder:
+            (BuildContext context) => EasyCameraView<T>(
+              config: config,
+              analyzer: analyzer,
+              analysisResultBuilder: resultBuilder,
+              onCapture: (_) {},
+              onAnalyzed:
+                  (EasyCaptureResult capture, T? result) =>
+                      Navigator.of(context).pop((capture, result)),
+            ),
+      ),
+    );
   }
 }

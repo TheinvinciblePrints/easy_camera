@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.0.0] - 2026-10-27
+### Breaking
+- Replaced `package:camera` with a native implementation: CameraX on Android and AVFoundation on iOS. The package is a Flutter plugin again.
+- Removed the `camera`, `image_editor`, `native_device_orientation` and `photo_view` dependencies, and the re-export of `package:camera`.
+- `onCapture` now receives an `EasyCaptureResult` instead of an `XFile`.
+- `EasyCamera.initialize()` and `EasyCamera.cameraView()` are gone. Use `EasyCameraView`, `EasyCamera.capture()` or `EasyCameraController`.
+- Renamed enums and `CameraConfig` fields (see the migration table in the README). The default lens is now `back`.
+- Minimum iOS 15 and Android SDK 23.
+
+### Added
+- `EasyCameraController` for custom UIs, with `EasyCameraState`.
+- `EasyCamera.capture()` and `EasyCamera.captureAndAnalyze()` one-liners.
+- Native post-processing through `CapturePreset`: rotation, front-camera mirroring, crop, resize, JPEG quality and metadata stripping. Includes `food`, `document` and `compact` presets for vision models.
+- AI payload helpers on `EasyCaptureResult`: `toBase64()`, `toDataUri()`, `toClaudeImageBlock()`, `toOpenAIImagePart()`, `toGeminiInlineData()`, `toJson()`.
+- `ImageAnalyzer<T>` for plugging in your own analysis (for example a calorie estimate); results appear on the review screen.
+- `CameraConfig.food()` preset, `FramingOverlay` guides (`plate`, `label`) with a matching crop.
+- Torch mode, zoom chips, pinch zoom on both platforms, exposure compensation and a new review screen.
+- Permission handling with a built-in "allow camera" / "Open Settings" screen.
+- Unit and widget tests against a fake platform.
+
 ## [0.0.7] - 2025-04-04
 ### Changed
 - Converted package from a Flutter plugin to a normal Dart package.

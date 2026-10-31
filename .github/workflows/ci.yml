@@ -93,7 +93,11 @@ jobs:
       matrix:
         dependency-manager: [cocoapods, swiftpm]
     steps:
+      # SwiftPM rejects the example's local plugin package when the checkout
+      # folder name differs from the plugin name, so match it here.
       - uses: actions/checkout@v4
+        with:
+          path: flutter_easy_camera
 
       - uses: subosito/flutter-action@v2
         with:
@@ -110,5 +114,5 @@ jobs:
           fi
 
       - name: Build for simulator
-        working-directory: example
+        working-directory: flutter_easy_camera/example
         run: flutter build ios --simulator --debug

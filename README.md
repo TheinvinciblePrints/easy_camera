@@ -230,5 +230,9 @@ The native bridge is generated with [Pigeon](https://pub.dev/packages/pigeon) fr
 dart run pigeon --input pigeons/messages.dart
 ```
 
+Bump Pigeon deliberately: change the pinned version in `pubspec.yaml`, regenerate, and commit the output. CI fails if the generated files are stale.
+
+To build the example with Swift Package Manager, clone the repo into a folder named `flutter_easy_camera`. SwiftPM rejects the example's local plugin package when the folder name differs from the plugin name. Apps that install the package from pub.dev are not affected.
+
 ## License
 MIT

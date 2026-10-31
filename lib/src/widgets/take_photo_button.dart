@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
+/// The round shutter button.
 class TakePhotoButton extends StatefulWidget {
-  const TakePhotoButton({required Key key, required this.onTap})
-    : super(key: key);
+  const TakePhotoButton({super.key, required this.onTap, this.busy = false});
+
+  /// Null disables the button.
   final void Function()? onTap;
+
+  /// Shows a spinner while a photo is being processed.
+  final bool busy;
 
   @override
   State createState() => _TakePhotoButtonState();
@@ -28,6 +33,12 @@ class _TakePhotoButtonState extends State<TakePhotoButton>
   }
 
   @override
+  void dispose() {
+    _animationController?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     _scale = 1 - (_animationController?.value ?? 0);
 
@@ -38,9 +49,24 @@ class _TakePhotoButtonState extends State<TakePhotoButton>
       child: SizedBox(
         height: 80,
         width: 80,
-        child: Transform.scale(
-          scale: _scale,
-          child: CustomPaint(painter: TakePhotoButtonPainter()),
+        child: Opacity(
+          opacity: widget.onTap == null ? 0.5 : 1,
+          child: Transform.scale(
+            scale: _scale,
+            child: CustomPaint(
+              painter: TakePhotoButtonPainter(),
+              child:
+                  widget.busy
+                      ? const Padding(
+                        padding: EdgeInsets.all(22),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 3,
+                          color: Colors.white,
+                        ),
+                      )
+                      : null,
+            ),
+          ),
         ),
       ),
     );

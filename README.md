@@ -1,5 +1,7 @@
 # EasyCamera
 
+[![CI](https://github.com/TheinvinciblePrints/easy_camera/actions/workflows/ci.yml/badge.svg)](https://github.com/TheinvinciblePrints/easy_camera/actions/workflows/ci.yml)
+
 A native Flutter camera with **CameraX** on Android and **AVFoundation** on iOS. It does not depend on `package:camera`. It ships customizable controls, framing guides and a review step, and it produces **AI-ready captures**: photos are rotated, cropped, resized, compressed and stripped of metadata on the device, then handed to you as bytes ready for a vision model.
 
 ## Features

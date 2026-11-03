@@ -1,81 +1,99 @@
 import 'package:flutter/material.dart';
 
-import 'camera_widget.dart';
-import 'enums.dart';
+import 'models/camera_enums.dart';
+import 'models/capture_preset.dart';
+import 'widgets/framing_overlay.dart';
 
-/// A configuration class for camera settings.
-///
-/// This class simplifies passing multiple camera-related parameters.
+/// Builds a custom flash button for the current [mode].
+typedef FlashControlBuilder =
+    Widget Function(BuildContext context, CameraFlashMode mode);
+
+/// Settings for `EasyCameraView`.
+@immutable
 class CameraConfig {
-  /// Constructor with default values.
   const CameraConfig({
-    this.imageResolution = ImageResolution.medium,
-    this.defaultCameraType = CameraType.front,
-    this.defaultFlashType = CameraFlashType.off,
+    this.initialLens = CameraLens.back,
+    this.resolution = ResolutionPreset.high,
+    this.initialFlashMode = CameraFlashMode.off,
+    this.previewFit = PreviewFit.cover,
+    this.capturePreset = CapturePreset.original,
+    this.cropToPreview = true,
+    this.framingOverlay,
     this.showControls = true,
-    this.showCaptureIcon = true,
-    this.showFlashControl = true,
-    this.showCameraSwitchIcon = true,
-    this.showCloseIcon = true,
-    this.captureIcon,
-    this.cameraSwitchIcon,
-    this.flashControlBuilder,
-    this.closeIcon,
-    this.cameraPreviewSize = CameraPreviewSize.fill,
-    this.minAvailableZoom = 1.0,
-    this.maxAvailableZoom = 1.0,
+    this.showCaptureButton = true,
+    this.showFlashButton = true,
+    this.showSwitchCameraButton = true,
+    this.showCloseButton = true,
+    this.showZoomSelector = true,
+    this.enableTapToFocus = true,
+    this.enablePinchZoom = true,
+    this.enableHaptics = true,
+    this.showReview = true,
     this.focusColor = Colors.white,
-    this.showImagePreview = true,
+    this.captureButton,
+    this.switchCameraButton,
+    this.closeButton,
+    this.flashButtonBuilder,
   });
 
-  /// The resolution of the captured image.
-  final ImageResolution imageResolution;
+  /// Preset for snapping meals for a calorie or nutrition app: a plate guide,
+  /// AI-sized captures with metadata stripped, and a review step.
+  const CameraConfig.food({
+    CameraLens initialLens = CameraLens.back,
+    CapturePreset capturePreset = CapturePreset.food,
+    FramingOverlay? framingOverlay = FramingOverlay.plate,
+    bool showReview = true,
+    bool enableHaptics = true,
+  }) : this(
+         initialLens: initialLens,
+         resolution: ResolutionPreset.veryHigh,
+         capturePreset: capturePreset,
+         framingOverlay: framingOverlay,
+         showReview: showReview,
+         enableHaptics: enableHaptics,
+       );
 
-  /// The default camera type (front or back).
-  final CameraType defaultCameraType;
+  final CameraLens initialLens;
+  final ResolutionPreset resolution;
+  final CameraFlashMode initialFlashMode;
+  final PreviewFit previewFit;
 
-  /// The default flash setting.
-  final CameraFlashType defaultFlashType;
+  /// Native post-processing applied to every capture.
+  final CapturePreset capturePreset;
 
-  /// Whether to show camera control buttons.
+  /// Crop photos to what the preview shows when [previewFit] is
+  /// [PreviewFit.cover], so the result matches what the user framed.
+  /// Ignored when the preset or [framingOverlay] sets a crop.
+  final bool cropToPreview;
+
+  /// Optional guide drawn over the preview, such as a plate outline.
+  final FramingOverlay? framingOverlay;
+
+  /// Master switch for all built-in controls.
   final bool showControls;
+  final bool showCaptureButton;
+  final bool showFlashButton;
+  final bool showSwitchCameraButton;
+  final bool showCloseButton;
 
-  /// Whether to show the capture button.
-  final bool showCaptureIcon;
+  /// Quick zoom chips such as 1x and 2x.
+  final bool showZoomSelector;
 
-  /// Whether to show the flash toggle button.
-  final bool showFlashControl;
+  final bool enableTapToFocus;
+  final bool enablePinchZoom;
 
-  /// Whether to show the camera switch button.
-  final bool showCameraSwitchIcon;
+  /// Light haptic feedback on capture.
+  final bool enableHaptics;
 
-  /// Whether to show the close button.
-  final bool showCloseIcon;
+  /// Show the photo, and the analysis if an analyzer is set, before handing
+  /// it back. The user can retake or accept.
+  final bool showReview;
 
-  /// Custom widget for the capture button.
-  final Widget? captureIcon;
+  /// Color of the tap-to-focus ring.
+  final Color focusColor;
 
-  /// Custom widget for the camera switch button.
-  final Widget? cameraSwitchIcon;
-
-  /// Custom builder for the flash control button.
-  final FlashControlBuilder? flashControlBuilder;
-
-  /// Custom widget for the close button.
-  final Widget? closeIcon;
-
-  /// Scaling option for the camera preview.
-  final CameraPreviewSize cameraPreviewSize;
-
-  /// The minimum zoom level available for the camera.
-  final double? minAvailableZoom;
-
-  /// The maximum zoom level available for the camera.
-  final double? maxAvailableZoom;
-
-  /// The color of the focus indicator.
-  final Color? focusColor;
-
-  /// Whether to show the captured image preview.
-  final bool showImagePreview;
+  final Widget? captureButton;
+  final Widget? switchCameraButton;
+  final Widget? closeButton;
+  final FlashControlBuilder? flashButtonBuilder;
 }

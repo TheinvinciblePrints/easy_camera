@@ -1,8 +1,8 @@
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+/// Button that spins when switching between front and back cameras.
 class CameraSwitchIcon extends StatefulWidget {
   const CameraSwitchIcon({
     super.key,
@@ -23,7 +23,6 @@ class _CameraSwitchIconState extends State<CameraSwitchIcon>
   bool _isAnimating = false;
   final double _targetRotationAngle = 0;
   double _currentRotationAngle = 0;
-  Timer? _rotationTimer;
 
   @override
   void initState() {
@@ -53,7 +52,6 @@ class _CameraSwitchIconState extends State<CameraSwitchIcon>
   @override
   void dispose() {
     _controller.dispose();
-    _rotationTimer?.cancel();
     super.dispose();
   }
 

@@ -1,7 +1,5 @@
-export 'package:camera/camera.dart';
+/// Kept for imports written against 0.0.x. Prefer
+/// `package:flutter_easy_camera/flutter_easy_camera.dart`.
+library;
 
-export 'src/camera_config.dart';
-export 'src/camera_widget.dart';
-export 'src/easy_camera.dart';
-export 'src/enums.dart';
-export 'src/logger.dart';
+export 'flutter_easy_camera.dart';

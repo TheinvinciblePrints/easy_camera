@@ -1,14 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import 'easy_camera.dart';
 
+/// Prints [message] when `EasyCamera.debugLogging` is on.
 void logError(String message, [String? code]) {
-  if (!EasyCamera.printLogs) {
+  if (!EasyCamera.debugLogging) {
     return;
   }
-  if (code != null) {
-    debugPrint('Error: $code\nError Message: $message');
-  } else {
-    debugPrint('Error: $code');
-  }
+  debugPrint('[flutter_easy_camera] ${code == null ? '' : '$code: '}$message');
 }
